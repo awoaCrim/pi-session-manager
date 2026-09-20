@@ -1,0 +1,2126 @@
+[
+  [
+    {
+      "type": "session",
+      "version": 3,
+      "id": "demo-session-001",
+      "timestamp": "2026-09-19T07:36:26.259Z",
+      "cwd": "C:/Projects/pi-session-manager"
+    },
+    {
+      "type": "model_change",
+      "id": "d0-1",
+      "parentId": null,
+      "timestamp": "2026-09-19T07:37:41.259Z",
+      "provider": "anthropic",
+      "modelId": "claude-sonnet-4-5"
+    },
+    {
+      "type": "session_info",
+      "id": "d0-2",
+      "parentId": "d0-1",
+      "timestamp": "2026-09-19T07:38:56.259Z",
+      "name": "构建会话管理工作台"
+    },
+    {
+      "type": "message",
+      "id": "d0-3",
+      "parentId": "d0-2",
+      "timestamp": "2026-09-19T07:40:11.259Z",
+      "message": {
+        "role": "user",
+        "content": "我想为 pi 做一个会话管理页面。支持批量管理、重命名，在终端继续会话，并实时查看对话内容。\n\n界面希望简洁一些，方便每天使用。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d0-4",
+      "parentId": "d0-3",
+      "timestamp": "2026-09-19T07:41:26.259Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "先确认会话文件的结构，再把读取、管理状态和终端启动分开。这样不会因为管理操作影响正在进行的对话。"
+          },
+          {
+            "type": "text",
+            "text": "好的。我先检查 pi 的会话格式与目录结构，确认如何安全地读取和恢复会话。\n\n会把页面分为三个区域：\n- **项目导航**：按工作目录组织会话\n- **会话列表**：搜索、多选与批量操作\n- **会话详情**：消息、工具调用与上下文信息"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d0-5",
+      "parentId": "d0-4",
+      "timestamp": "2026-09-19T07:42:41.259Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call-1",
+            "name": "read",
+            "arguments": {
+              "path": "docs/session-format.md"
+            }
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d0-6",
+      "parentId": "d0-5",
+      "timestamp": "2026-09-19T07:43:56.259Z",
+      "message": {
+        "role": "toolResult",
+        "toolName": "read",
+        "toolCallId": "call-1",
+        "content": [
+          {
+            "type": "text",
+            "text": "# Session File Format\n\nSessions are stored as JSONL files.\nEach entry has an id and parentId, forming a tree.\n\nSession location: ~/.pi/agent/sessions/"
+          }
+        ]
+      }
+    },
+    {
+      "type": "message",
+      "id": "d0-7",
+      "parentId": "d0-6",
+      "timestamp": "2026-09-19T07:45:11.259Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已经确认了会话结构。管理器会直接读取 JSONL，并把收藏、归档和显示名称保存在独立文件中。\n\n```typescript\ninterface SessionMeta {\n  name?: string;\n  starred?: boolean;\n  archived?: boolean;\n}\n```\n\n这样可以保留原始会话记录，也不会与 pi 的实时写入冲突。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d0-8",
+      "parentId": "d0-7",
+      "timestamp": "2026-09-19T07:46:26.259Z",
+      "message": {
+        "role": "user",
+        "content": "可以，也把工具调用和思考过程区分开显示。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d0-9",
+      "parentId": "d0-8",
+      "timestamp": "2026-09-19T07:47:41.259Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已加入折叠展示。工具调用显示工具名、参数和结果；思考过程默认收起，方便快速浏览对话。\n\n会话文件更新后，页面会自动获取最新内容。你也可以暂停跟随，在历史消息中停留。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    }
+  ],
+  [
+    {
+      "type": "session",
+      "version": 3,
+      "id": "demo-session-002",
+      "timestamp": "2026-09-19T07:13:26.266Z",
+      "cwd": "C:/Projects/pi-session-manager"
+    },
+    {
+      "type": "model_change",
+      "id": "d1-1",
+      "parentId": null,
+      "timestamp": "2026-09-19T07:14:41.266Z",
+      "provider": "openai",
+      "modelId": "gpt-5"
+    },
+    {
+      "type": "session_info",
+      "id": "d1-2",
+      "parentId": "d1-1",
+      "timestamp": "2026-09-19T07:15:56.266Z",
+      "name": "完善 JSONL 解析与分支支持"
+    },
+    {
+      "type": "message",
+      "id": "d1-3",
+      "parentId": "d1-2",
+      "timestamp": "2026-09-19T07:17:11.266Z",
+      "message": {
+        "role": "user",
+        "content": "帮我完成「完善 JSONL 解析与分支支持」，先看看现有实现，再给出可运行的方案。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d1-4",
+      "parentId": "d1-3",
+      "timestamp": "2026-09-19T07:18:26.266Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "先确认会话文件的结构，再把读取、管理状态和终端启动分开。这样不会因为管理操作影响正在进行的对话。"
+          },
+          {
+            "type": "text",
+            "text": "我会先检查项目结构和相关实现，再逐步完成修改与验证。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d1-5",
+      "parentId": "d1-4",
+      "timestamp": "2026-09-19T07:19:41.266Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call-1",
+            "name": "read",
+            "arguments": {
+              "path": "docs/session-format.md"
+            }
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d1-6",
+      "parentId": "d1-5",
+      "timestamp": "2026-09-19T07:20:56.266Z",
+      "message": {
+        "role": "toolResult",
+        "toolName": "read",
+        "toolCallId": "call-1",
+        "content": [
+          {
+            "type": "text",
+            "text": "# Session File Format\n\nSessions are stored as JSONL files.\nEach entry has an id and parentId, forming a tree.\n\nSession location: ~/.pi/agent/sessions/"
+          }
+        ]
+      }
+    },
+    {
+      "type": "message",
+      "id": "d1-7",
+      "parentId": "d1-6",
+      "timestamp": "2026-09-19T07:22:11.266Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已经确认了会话结构。管理器会直接读取 JSONL，并把收藏、归档和显示名称保存在独立文件中。\n\n```typescript\ninterface SessionMeta {\n  name?: string;\n  starred?: boolean;\n  archived?: boolean;\n}\n```\n\n这样可以保留原始会话记录，也不会与 pi 的实时写入冲突。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d1-8",
+      "parentId": "d1-7",
+      "timestamp": "2026-09-19T07:23:26.266Z",
+      "message": {
+        "role": "user",
+        "content": "可以，也把工具调用和思考过程区分开显示。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d1-9",
+      "parentId": "d1-8",
+      "timestamp": "2026-09-19T07:24:41.266Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已加入折叠展示。工具调用显示工具名、参数和结果；思考过程默认收起，方便快速浏览对话。\n\n会话文件更新后，页面会自动获取最新内容。你也可以暂停跟随，在历史消息中停留。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    }
+  ],
+  [
+    {
+      "type": "session",
+      "version": 3,
+      "id": "demo-session-003",
+      "timestamp": "2026-09-19T06:21:26.268Z",
+      "cwd": "C:/Projects/pi-session-manager"
+    },
+    {
+      "type": "model_change",
+      "id": "d2-1",
+      "parentId": null,
+      "timestamp": "2026-09-19T06:22:41.268Z",
+      "provider": "anthropic",
+      "modelId": "claude-sonnet-4-5"
+    },
+    {
+      "type": "session_info",
+      "id": "d2-2",
+      "parentId": "d2-1",
+      "timestamp": "2026-09-19T06:23:56.268Z",
+      "name": "会话列表的搜索与筛选"
+    },
+    {
+      "type": "message",
+      "id": "d2-3",
+      "parentId": "d2-2",
+      "timestamp": "2026-09-19T06:25:11.268Z",
+      "message": {
+        "role": "user",
+        "content": "帮我完成「会话列表的搜索与筛选」，先看看现有实现，再给出可运行的方案。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d2-4",
+      "parentId": "d2-3",
+      "timestamp": "2026-09-19T06:26:26.268Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "先确认会话文件的结构，再把读取、管理状态和终端启动分开。这样不会因为管理操作影响正在进行的对话。"
+          },
+          {
+            "type": "text",
+            "text": "我会先检查项目结构和相关实现，再逐步完成修改与验证。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d2-5",
+      "parentId": "d2-4",
+      "timestamp": "2026-09-19T06:27:41.268Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call-1",
+            "name": "read",
+            "arguments": {
+              "path": "docs/session-format.md"
+            }
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d2-6",
+      "parentId": "d2-5",
+      "timestamp": "2026-09-19T06:28:56.268Z",
+      "message": {
+        "role": "toolResult",
+        "toolName": "read",
+        "toolCallId": "call-1",
+        "content": [
+          {
+            "type": "text",
+            "text": "# Session File Format\n\nSessions are stored as JSONL files.\nEach entry has an id and parentId, forming a tree.\n\nSession location: ~/.pi/agent/sessions/"
+          }
+        ]
+      }
+    },
+    {
+      "type": "message",
+      "id": "d2-7",
+      "parentId": "d2-6",
+      "timestamp": "2026-09-19T06:30:11.268Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已经确认了会话结构。管理器会直接读取 JSONL，并把收藏、归档和显示名称保存在独立文件中。\n\n```typescript\ninterface SessionMeta {\n  name?: string;\n  starred?: boolean;\n  archived?: boolean;\n}\n```\n\n这样可以保留原始会话记录，也不会与 pi 的实时写入冲突。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d2-8",
+      "parentId": "d2-7",
+      "timestamp": "2026-09-19T06:31:26.268Z",
+      "message": {
+        "role": "user",
+        "content": "可以，也把工具调用和思考过程区分开显示。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d2-9",
+      "parentId": "d2-8",
+      "timestamp": "2026-09-19T06:32:41.268Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已加入折叠展示。工具调用显示工具名、参数和结果；思考过程默认收起，方便快速浏览对话。\n\n会话文件更新后，页面会自动获取最新内容。你也可以暂停跟随，在历史消息中停留。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    }
+  ],
+  [
+    {
+      "type": "session",
+      "version": 3,
+      "id": "demo-session-004",
+      "timestamp": "2026-09-19T04:37:26.271Z",
+      "cwd": "C:/Projects/design-system"
+    },
+    {
+      "type": "model_change",
+      "id": "d3-1",
+      "parentId": null,
+      "timestamp": "2026-09-19T04:38:41.271Z",
+      "provider": "anthropic",
+      "modelId": "claude-sonnet-4-5"
+    },
+    {
+      "type": "session_info",
+      "id": "d3-2",
+      "parentId": "d3-1",
+      "timestamp": "2026-09-19T04:39:56.271Z",
+      "name": "设计组件库的色彩系统"
+    },
+    {
+      "type": "message",
+      "id": "d3-3",
+      "parentId": "d3-2",
+      "timestamp": "2026-09-19T04:41:11.271Z",
+      "message": {
+        "role": "user",
+        "content": "帮我完成「设计组件库的色彩系统」，先看看现有实现，再给出可运行的方案。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d3-4",
+      "parentId": "d3-3",
+      "timestamp": "2026-09-19T04:42:26.271Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "先确认会话文件的结构，再把读取、管理状态和终端启动分开。这样不会因为管理操作影响正在进行的对话。"
+          },
+          {
+            "type": "text",
+            "text": "我会先检查项目结构和相关实现，再逐步完成修改与验证。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d3-5",
+      "parentId": "d3-4",
+      "timestamp": "2026-09-19T04:43:41.271Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call-1",
+            "name": "read",
+            "arguments": {
+              "path": "docs/session-format.md"
+            }
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d3-6",
+      "parentId": "d3-5",
+      "timestamp": "2026-09-19T04:44:56.271Z",
+      "message": {
+        "role": "toolResult",
+        "toolName": "read",
+        "toolCallId": "call-1",
+        "content": [
+          {
+            "type": "text",
+            "text": "# Session File Format\n\nSessions are stored as JSONL files.\nEach entry has an id and parentId, forming a tree.\n\nSession location: ~/.pi/agent/sessions/"
+          }
+        ]
+      }
+    },
+    {
+      "type": "message",
+      "id": "d3-7",
+      "parentId": "d3-6",
+      "timestamp": "2026-09-19T04:46:11.271Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已经确认了会话结构。管理器会直接读取 JSONL，并把收藏、归档和显示名称保存在独立文件中。\n\n```typescript\ninterface SessionMeta {\n  name?: string;\n  starred?: boolean;\n  archived?: boolean;\n}\n```\n\n这样可以保留原始会话记录，也不会与 pi 的实时写入冲突。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d3-8",
+      "parentId": "d3-7",
+      "timestamp": "2026-09-19T04:47:26.271Z",
+      "message": {
+        "role": "user",
+        "content": "可以，也把工具调用和思考过程区分开显示。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d3-9",
+      "parentId": "d3-8",
+      "timestamp": "2026-09-19T04:48:41.271Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已加入折叠展示。工具调用显示工具名、参数和结果；思考过程默认收起，方便快速浏览对话。\n\n会话文件更新后，页面会自动获取最新内容。你也可以暂停跟随，在历史消息中停留。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    }
+  ],
+  [
+    {
+      "type": "session",
+      "version": 3,
+      "id": "demo-session-005",
+      "timestamp": "2026-09-19T01:57:26.278Z",
+      "cwd": "C:/Projects/api-gateway"
+    },
+    {
+      "type": "model_change",
+      "id": "d4-1",
+      "parentId": null,
+      "timestamp": "2026-09-19T01:58:41.278Z",
+      "provider": "openai",
+      "modelId": "gpt-5"
+    },
+    {
+      "type": "session_info",
+      "id": "d4-2",
+      "parentId": "d4-1",
+      "timestamp": "2026-09-19T01:59:56.278Z",
+      "name": "排查 SSE 连接断开问题"
+    },
+    {
+      "type": "message",
+      "id": "d4-3",
+      "parentId": "d4-2",
+      "timestamp": "2026-09-19T02:01:11.278Z",
+      "message": {
+        "role": "user",
+        "content": "帮我完成「排查 SSE 连接断开问题」，先看看现有实现，再给出可运行的方案。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d4-4",
+      "parentId": "d4-3",
+      "timestamp": "2026-09-19T02:02:26.278Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "先确认会话文件的结构，再把读取、管理状态和终端启动分开。这样不会因为管理操作影响正在进行的对话。"
+          },
+          {
+            "type": "text",
+            "text": "我会先检查项目结构和相关实现，再逐步完成修改与验证。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d4-5",
+      "parentId": "d4-4",
+      "timestamp": "2026-09-19T02:03:41.278Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call-1",
+            "name": "read",
+            "arguments": {
+              "path": "docs/session-format.md"
+            }
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d4-6",
+      "parentId": "d4-5",
+      "timestamp": "2026-09-19T02:04:56.278Z",
+      "message": {
+        "role": "toolResult",
+        "toolName": "read",
+        "toolCallId": "call-1",
+        "content": [
+          {
+            "type": "text",
+            "text": "# Session File Format\n\nSessions are stored as JSONL files.\nEach entry has an id and parentId, forming a tree.\n\nSession location: ~/.pi/agent/sessions/"
+          }
+        ]
+      }
+    },
+    {
+      "type": "message",
+      "id": "d4-7",
+      "parentId": "d4-6",
+      "timestamp": "2026-09-19T02:06:11.278Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已经确认了会话结构。管理器会直接读取 JSONL，并把收藏、归档和显示名称保存在独立文件中。\n\n```typescript\ninterface SessionMeta {\n  name?: string;\n  starred?: boolean;\n  archived?: boolean;\n}\n```\n\n这样可以保留原始会话记录，也不会与 pi 的实时写入冲突。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d4-8",
+      "parentId": "d4-7",
+      "timestamp": "2026-09-19T02:07:26.278Z",
+      "message": {
+        "role": "user",
+        "content": "可以，也把工具调用和思考过程区分开显示。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d4-9",
+      "parentId": "d4-8",
+      "timestamp": "2026-09-19T02:08:41.278Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已加入折叠展示。工具调用显示工具名、参数和结果；思考过程默认收起，方便快速浏览对话。\n\n会话文件更新后，页面会自动获取最新内容。你也可以暂停跟随，在历史消息中停留。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    }
+  ],
+  [
+    {
+      "type": "session",
+      "version": 3,
+      "id": "demo-session-006",
+      "timestamp": "2026-09-18T15:37:26.280Z",
+      "cwd": "C:/Projects/pi-session-manager"
+    },
+    {
+      "type": "model_change",
+      "id": "d5-1",
+      "parentId": null,
+      "timestamp": "2026-09-18T15:38:41.280Z",
+      "provider": "google",
+      "modelId": "gemini-2.5-pro"
+    },
+    {
+      "type": "session_info",
+      "id": "d5-2",
+      "parentId": "d5-1",
+      "timestamp": "2026-09-18T15:39:56.280Z",
+      "name": "终端恢复会话的跨平台适配"
+    },
+    {
+      "type": "message",
+      "id": "d5-3",
+      "parentId": "d5-2",
+      "timestamp": "2026-09-18T15:41:11.280Z",
+      "message": {
+        "role": "user",
+        "content": "帮我完成「终端恢复会话的跨平台适配」，先看看现有实现，再给出可运行的方案。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d5-4",
+      "parentId": "d5-3",
+      "timestamp": "2026-09-18T15:42:26.280Z",
+      "message": {
+        "role": "assistant",
+        "provider": "google",
+        "model": "gemini-2.5-pro",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "先确认会话文件的结构，再把读取、管理状态和终端启动分开。这样不会因为管理操作影响正在进行的对话。"
+          },
+          {
+            "type": "text",
+            "text": "我会先检查项目结构和相关实现，再逐步完成修改与验证。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d5-5",
+      "parentId": "d5-4",
+      "timestamp": "2026-09-18T15:43:41.280Z",
+      "message": {
+        "role": "assistant",
+        "provider": "google",
+        "model": "gemini-2.5-pro",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call-1",
+            "name": "read",
+            "arguments": {
+              "path": "docs/session-format.md"
+            }
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d5-6",
+      "parentId": "d5-5",
+      "timestamp": "2026-09-18T15:44:56.280Z",
+      "message": {
+        "role": "toolResult",
+        "toolName": "read",
+        "toolCallId": "call-1",
+        "content": [
+          {
+            "type": "text",
+            "text": "# Session File Format\n\nSessions are stored as JSONL files.\nEach entry has an id and parentId, forming a tree.\n\nSession location: ~/.pi/agent/sessions/"
+          }
+        ]
+      }
+    },
+    {
+      "type": "message",
+      "id": "d5-7",
+      "parentId": "d5-6",
+      "timestamp": "2026-09-18T15:46:11.280Z",
+      "message": {
+        "role": "assistant",
+        "provider": "google",
+        "model": "gemini-2.5-pro",
+        "content": [
+          {
+            "type": "text",
+            "text": "已经确认了会话结构。管理器会直接读取 JSONL，并把收藏、归档和显示名称保存在独立文件中。\n\n```typescript\ninterface SessionMeta {\n  name?: string;\n  starred?: boolean;\n  archived?: boolean;\n}\n```\n\n这样可以保留原始会话记录，也不会与 pi 的实时写入冲突。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d5-8",
+      "parentId": "d5-7",
+      "timestamp": "2026-09-18T15:47:26.280Z",
+      "message": {
+        "role": "user",
+        "content": "可以，也把工具调用和思考过程区分开显示。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d5-9",
+      "parentId": "d5-8",
+      "timestamp": "2026-09-18T15:48:41.280Z",
+      "message": {
+        "role": "assistant",
+        "provider": "google",
+        "model": "gemini-2.5-pro",
+        "content": [
+          {
+            "type": "text",
+            "text": "已加入折叠展示。工具调用显示工具名、参数和结果；思考过程默认收起，方便快速浏览对话。\n\n会话文件更新后，页面会自动获取最新内容。你也可以暂停跟随，在历史消息中停留。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    }
+  ],
+  [
+    {
+      "type": "session",
+      "version": 3,
+      "id": "demo-session-007",
+      "timestamp": "2026-09-18T06:37:26.281Z",
+      "cwd": "C:/Projects/design-system"
+    },
+    {
+      "type": "model_change",
+      "id": "d6-1",
+      "parentId": null,
+      "timestamp": "2026-09-18T06:38:41.281Z",
+      "provider": "anthropic",
+      "modelId": "claude-sonnet-4-5"
+    },
+    {
+      "type": "session_info",
+      "id": "d6-2",
+      "parentId": "d6-1",
+      "timestamp": "2026-09-18T06:39:56.281Z",
+      "name": "实现无障碍 Dialog 组件"
+    },
+    {
+      "type": "message",
+      "id": "d6-3",
+      "parentId": "d6-2",
+      "timestamp": "2026-09-18T06:41:11.281Z",
+      "message": {
+        "role": "user",
+        "content": "帮我完成「实现无障碍 Dialog 组件」，先看看现有实现，再给出可运行的方案。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d6-4",
+      "parentId": "d6-3",
+      "timestamp": "2026-09-18T06:42:26.281Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "先确认会话文件的结构，再把读取、管理状态和终端启动分开。这样不会因为管理操作影响正在进行的对话。"
+          },
+          {
+            "type": "text",
+            "text": "我会先检查项目结构和相关实现，再逐步完成修改与验证。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d6-5",
+      "parentId": "d6-4",
+      "timestamp": "2026-09-18T06:43:41.281Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call-1",
+            "name": "read",
+            "arguments": {
+              "path": "docs/session-format.md"
+            }
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d6-6",
+      "parentId": "d6-5",
+      "timestamp": "2026-09-18T06:44:56.281Z",
+      "message": {
+        "role": "toolResult",
+        "toolName": "read",
+        "toolCallId": "call-1",
+        "content": [
+          {
+            "type": "text",
+            "text": "# Session File Format\n\nSessions are stored as JSONL files.\nEach entry has an id and parentId, forming a tree.\n\nSession location: ~/.pi/agent/sessions/"
+          }
+        ]
+      }
+    },
+    {
+      "type": "message",
+      "id": "d6-7",
+      "parentId": "d6-6",
+      "timestamp": "2026-09-18T06:46:11.281Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已经确认了会话结构。管理器会直接读取 JSONL，并把收藏、归档和显示名称保存在独立文件中。\n\n```typescript\ninterface SessionMeta {\n  name?: string;\n  starred?: boolean;\n  archived?: boolean;\n}\n```\n\n这样可以保留原始会话记录，也不会与 pi 的实时写入冲突。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d6-8",
+      "parentId": "d6-7",
+      "timestamp": "2026-09-18T06:47:26.281Z",
+      "message": {
+        "role": "user",
+        "content": "可以，也把工具调用和思考过程区分开显示。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d6-9",
+      "parentId": "d6-8",
+      "timestamp": "2026-09-18T06:48:41.281Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已加入折叠展示。工具调用显示工具名、参数和结果；思考过程默认收起，方便快速浏览对话。\n\n会话文件更新后，页面会自动获取最新内容。你也可以暂停跟随，在历史消息中停留。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    }
+  ],
+  [
+    {
+      "type": "session",
+      "version": 3,
+      "id": "demo-session-008",
+      "timestamp": "2026-09-17T23:57:26.283Z",
+      "cwd": "C:/Projects/api-gateway"
+    },
+    {
+      "type": "model_change",
+      "id": "d7-1",
+      "parentId": null,
+      "timestamp": "2026-09-17T23:58:41.283Z",
+      "provider": "openai",
+      "modelId": "gpt-5"
+    },
+    {
+      "type": "session_info",
+      "id": "d7-2",
+      "parentId": "d7-1",
+      "timestamp": "2026-09-17T23:59:56.283Z",
+      "name": "为认证接口补充集成测试"
+    },
+    {
+      "type": "message",
+      "id": "d7-3",
+      "parentId": "d7-2",
+      "timestamp": "2026-09-18T00:01:11.283Z",
+      "message": {
+        "role": "user",
+        "content": "帮我完成「为认证接口补充集成测试」，先看看现有实现，再给出可运行的方案。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d7-4",
+      "parentId": "d7-3",
+      "timestamp": "2026-09-18T00:02:26.283Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "先确认会话文件的结构，再把读取、管理状态和终端启动分开。这样不会因为管理操作影响正在进行的对话。"
+          },
+          {
+            "type": "text",
+            "text": "我会先检查项目结构和相关实现，再逐步完成修改与验证。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d7-5",
+      "parentId": "d7-4",
+      "timestamp": "2026-09-18T00:03:41.283Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call-1",
+            "name": "read",
+            "arguments": {
+              "path": "docs/session-format.md"
+            }
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d7-6",
+      "parentId": "d7-5",
+      "timestamp": "2026-09-18T00:04:56.283Z",
+      "message": {
+        "role": "toolResult",
+        "toolName": "read",
+        "toolCallId": "call-1",
+        "content": [
+          {
+            "type": "text",
+            "text": "# Session File Format\n\nSessions are stored as JSONL files.\nEach entry has an id and parentId, forming a tree.\n\nSession location: ~/.pi/agent/sessions/"
+          }
+        ]
+      }
+    },
+    {
+      "type": "message",
+      "id": "d7-7",
+      "parentId": "d7-6",
+      "timestamp": "2026-09-18T00:06:11.283Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已经确认了会话结构。管理器会直接读取 JSONL，并把收藏、归档和显示名称保存在独立文件中。\n\n```typescript\ninterface SessionMeta {\n  name?: string;\n  starred?: boolean;\n  archived?: boolean;\n}\n```\n\n这样可以保留原始会话记录，也不会与 pi 的实时写入冲突。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d7-8",
+      "parentId": "d7-7",
+      "timestamp": "2026-09-18T00:07:26.283Z",
+      "message": {
+        "role": "user",
+        "content": "可以，也把工具调用和思考过程区分开显示。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d7-9",
+      "parentId": "d7-8",
+      "timestamp": "2026-09-18T00:08:41.283Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已加入折叠展示。工具调用显示工具名、参数和结果；思考过程默认收起，方便快速浏览对话。\n\n会话文件更新后，页面会自动获取最新内容。你也可以暂停跟随，在历史消息中停留。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    }
+  ],
+  [
+    {
+      "type": "session",
+      "version": 3,
+      "id": "demo-session-009",
+      "timestamp": "2026-09-17T12:17:26.284Z",
+      "cwd": "C:/Projects/notes"
+    },
+    {
+      "type": "model_change",
+      "id": "d8-1",
+      "parentId": null,
+      "timestamp": "2026-09-17T12:18:41.284Z",
+      "provider": "anthropic",
+      "modelId": "claude-sonnet-4-5"
+    },
+    {
+      "type": "session_info",
+      "id": "d8-2",
+      "parentId": "d8-1",
+      "timestamp": "2026-09-17T12:19:56.284Z",
+      "name": "整理项目发布前的检查清单"
+    },
+    {
+      "type": "message",
+      "id": "d8-3",
+      "parentId": "d8-2",
+      "timestamp": "2026-09-17T12:21:11.284Z",
+      "message": {
+        "role": "user",
+        "content": "帮我完成「整理项目发布前的检查清单」，先看看现有实现，再给出可运行的方案。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d8-4",
+      "parentId": "d8-3",
+      "timestamp": "2026-09-17T12:22:26.284Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "先确认会话文件的结构，再把读取、管理状态和终端启动分开。这样不会因为管理操作影响正在进行的对话。"
+          },
+          {
+            "type": "text",
+            "text": "我会先检查项目结构和相关实现，再逐步完成修改与验证。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d8-5",
+      "parentId": "d8-4",
+      "timestamp": "2026-09-17T12:23:41.284Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call-1",
+            "name": "read",
+            "arguments": {
+              "path": "docs/session-format.md"
+            }
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d8-6",
+      "parentId": "d8-5",
+      "timestamp": "2026-09-17T12:24:56.284Z",
+      "message": {
+        "role": "toolResult",
+        "toolName": "read",
+        "toolCallId": "call-1",
+        "content": [
+          {
+            "type": "text",
+            "text": "# Session File Format\n\nSessions are stored as JSONL files.\nEach entry has an id and parentId, forming a tree.\n\nSession location: ~/.pi/agent/sessions/"
+          }
+        ]
+      }
+    },
+    {
+      "type": "message",
+      "id": "d8-7",
+      "parentId": "d8-6",
+      "timestamp": "2026-09-17T12:26:11.284Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已经确认了会话结构。管理器会直接读取 JSONL，并把收藏、归档和显示名称保存在独立文件中。\n\n```typescript\ninterface SessionMeta {\n  name?: string;\n  starred?: boolean;\n  archived?: boolean;\n}\n```\n\n这样可以保留原始会话记录，也不会与 pi 的实时写入冲突。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d8-8",
+      "parentId": "d8-7",
+      "timestamp": "2026-09-17T12:27:26.284Z",
+      "message": {
+        "role": "user",
+        "content": "可以，也把工具调用和思考过程区分开显示。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d8-9",
+      "parentId": "d8-8",
+      "timestamp": "2026-09-17T12:28:41.284Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已加入折叠展示。工具调用显示工具名、参数和结果；思考过程默认收起，方便快速浏览对话。\n\n会话文件更新后，页面会自动获取最新内容。你也可以暂停跟随，在历史消息中停留。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    }
+  ],
+  [
+    {
+      "type": "session",
+      "version": 3,
+      "id": "demo-session-010",
+      "timestamp": "2026-09-16T12:57:26.286Z",
+      "cwd": "C:/Projects/notes"
+    },
+    {
+      "type": "model_change",
+      "id": "d9-1",
+      "parentId": null,
+      "timestamp": "2026-09-16T12:58:41.286Z",
+      "provider": "google",
+      "modelId": "gemini-2.5-pro"
+    },
+    {
+      "type": "session_info",
+      "id": "d9-2",
+      "parentId": "d9-1",
+      "timestamp": "2026-09-16T12:59:56.286Z",
+      "name": "探索 pi 扩展的实现方式"
+    },
+    {
+      "type": "message",
+      "id": "d9-3",
+      "parentId": "d9-2",
+      "timestamp": "2026-09-16T13:01:11.286Z",
+      "message": {
+        "role": "user",
+        "content": "帮我完成「探索 pi 扩展的实现方式」，先看看现有实现，再给出可运行的方案。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d9-4",
+      "parentId": "d9-3",
+      "timestamp": "2026-09-16T13:02:26.286Z",
+      "message": {
+        "role": "assistant",
+        "provider": "google",
+        "model": "gemini-2.5-pro",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "先确认会话文件的结构，再把读取、管理状态和终端启动分开。这样不会因为管理操作影响正在进行的对话。"
+          },
+          {
+            "type": "text",
+            "text": "我会先检查项目结构和相关实现，再逐步完成修改与验证。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d9-5",
+      "parentId": "d9-4",
+      "timestamp": "2026-09-16T13:03:41.286Z",
+      "message": {
+        "role": "assistant",
+        "provider": "google",
+        "model": "gemini-2.5-pro",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call-1",
+            "name": "read",
+            "arguments": {
+              "path": "docs/session-format.md"
+            }
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d9-6",
+      "parentId": "d9-5",
+      "timestamp": "2026-09-16T13:04:56.286Z",
+      "message": {
+        "role": "toolResult",
+        "toolName": "read",
+        "toolCallId": "call-1",
+        "content": [
+          {
+            "type": "text",
+            "text": "# Session File Format\n\nSessions are stored as JSONL files.\nEach entry has an id and parentId, forming a tree.\n\nSession location: ~/.pi/agent/sessions/"
+          }
+        ]
+      }
+    },
+    {
+      "type": "message",
+      "id": "d9-7",
+      "parentId": "d9-6",
+      "timestamp": "2026-09-16T13:06:11.286Z",
+      "message": {
+        "role": "assistant",
+        "provider": "google",
+        "model": "gemini-2.5-pro",
+        "content": [
+          {
+            "type": "text",
+            "text": "已经确认了会话结构。管理器会直接读取 JSONL，并把收藏、归档和显示名称保存在独立文件中。\n\n```typescript\ninterface SessionMeta {\n  name?: string;\n  starred?: boolean;\n  archived?: boolean;\n}\n```\n\n这样可以保留原始会话记录，也不会与 pi 的实时写入冲突。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d9-8",
+      "parentId": "d9-7",
+      "timestamp": "2026-09-16T13:07:26.286Z",
+      "message": {
+        "role": "user",
+        "content": "可以，也把工具调用和思考过程区分开显示。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d9-9",
+      "parentId": "d9-8",
+      "timestamp": "2026-09-16T13:08:41.286Z",
+      "message": {
+        "role": "assistant",
+        "provider": "google",
+        "model": "gemini-2.5-pro",
+        "content": [
+          {
+            "type": "text",
+            "text": "已加入折叠展示。工具调用显示工具名、参数和结果；思考过程默认收起，方便快速浏览对话。\n\n会话文件更新后，页面会自动获取最新内容。你也可以暂停跟随，在历史消息中停留。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    }
+  ],
+  [
+    {
+      "type": "session",
+      "version": 3,
+      "id": "demo-session-011",
+      "timestamp": "2026-09-15T15:17:26.288Z",
+      "cwd": "C:/Projects/design-system"
+    },
+    {
+      "type": "model_change",
+      "id": "d10-1",
+      "parentId": null,
+      "timestamp": "2026-09-15T15:18:41.288Z",
+      "provider": "openai",
+      "modelId": "gpt-5"
+    },
+    {
+      "type": "session_info",
+      "id": "d10-2",
+      "parentId": "d10-1",
+      "timestamp": "2026-09-15T15:19:56.288Z",
+      "name": "重构 Button 变体与尺寸"
+    },
+    {
+      "type": "message",
+      "id": "d10-3",
+      "parentId": "d10-2",
+      "timestamp": "2026-09-15T15:21:11.288Z",
+      "message": {
+        "role": "user",
+        "content": "帮我完成「重构 Button 变体与尺寸」，先看看现有实现，再给出可运行的方案。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d10-4",
+      "parentId": "d10-3",
+      "timestamp": "2026-09-15T15:22:26.288Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "先确认会话文件的结构，再把读取、管理状态和终端启动分开。这样不会因为管理操作影响正在进行的对话。"
+          },
+          {
+            "type": "text",
+            "text": "我会先检查项目结构和相关实现，再逐步完成修改与验证。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d10-5",
+      "parentId": "d10-4",
+      "timestamp": "2026-09-15T15:23:41.288Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call-1",
+            "name": "read",
+            "arguments": {
+              "path": "docs/session-format.md"
+            }
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d10-6",
+      "parentId": "d10-5",
+      "timestamp": "2026-09-15T15:24:56.288Z",
+      "message": {
+        "role": "toolResult",
+        "toolName": "read",
+        "toolCallId": "call-1",
+        "content": [
+          {
+            "type": "text",
+            "text": "# Session File Format\n\nSessions are stored as JSONL files.\nEach entry has an id and parentId, forming a tree.\n\nSession location: ~/.pi/agent/sessions/"
+          }
+        ]
+      }
+    },
+    {
+      "type": "message",
+      "id": "d10-7",
+      "parentId": "d10-6",
+      "timestamp": "2026-09-15T15:26:11.288Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已经确认了会话结构。管理器会直接读取 JSONL，并把收藏、归档和显示名称保存在独立文件中。\n\n```typescript\ninterface SessionMeta {\n  name?: string;\n  starred?: boolean;\n  archived?: boolean;\n}\n```\n\n这样可以保留原始会话记录，也不会与 pi 的实时写入冲突。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d10-8",
+      "parentId": "d10-7",
+      "timestamp": "2026-09-15T15:27:26.288Z",
+      "message": {
+        "role": "user",
+        "content": "可以，也把工具调用和思考过程区分开显示。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d10-9",
+      "parentId": "d10-8",
+      "timestamp": "2026-09-15T15:28:41.288Z",
+      "message": {
+        "role": "assistant",
+        "provider": "openai",
+        "model": "gpt-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已加入折叠展示。工具调用显示工具名、参数和结果；思考过程默认收起，方便快速浏览对话。\n\n会话文件更新后，页面会自动获取最新内容。你也可以暂停跟随，在历史消息中停留。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    }
+  ],
+  [
+    {
+      "type": "session",
+      "version": 3,
+      "id": "demo-session-012",
+      "timestamp": "2026-09-14T00:57:26.289Z",
+      "cwd": "C:/Projects/api-gateway"
+    },
+    {
+      "type": "model_change",
+      "id": "d11-1",
+      "parentId": null,
+      "timestamp": "2026-09-14T00:58:41.289Z",
+      "provider": "anthropic",
+      "modelId": "claude-sonnet-4-5"
+    },
+    {
+      "type": "session_info",
+      "id": "d11-2",
+      "parentId": "d11-1",
+      "timestamp": "2026-09-14T00:59:56.289Z",
+      "name": "优化缓存命中率与响应时间"
+    },
+    {
+      "type": "message",
+      "id": "d11-3",
+      "parentId": "d11-2",
+      "timestamp": "2026-09-14T01:01:11.289Z",
+      "message": {
+        "role": "user",
+        "content": "帮我完成「优化缓存命中率与响应时间」，先看看现有实现，再给出可运行的方案。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d11-4",
+      "parentId": "d11-3",
+      "timestamp": "2026-09-14T01:02:26.289Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "先确认会话文件的结构，再把读取、管理状态和终端启动分开。这样不会因为管理操作影响正在进行的对话。"
+          },
+          {
+            "type": "text",
+            "text": "我会先检查项目结构和相关实现，再逐步完成修改与验证。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d11-5",
+      "parentId": "d11-4",
+      "timestamp": "2026-09-14T01:03:41.289Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "toolCall",
+            "id": "call-1",
+            "name": "read",
+            "arguments": {
+              "path": "docs/session-format.md"
+            }
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d11-6",
+      "parentId": "d11-5",
+      "timestamp": "2026-09-14T01:04:56.289Z",
+      "message": {
+        "role": "toolResult",
+        "toolName": "read",
+        "toolCallId": "call-1",
+        "content": [
+          {
+            "type": "text",
+            "text": "# Session File Format\n\nSessions are stored as JSONL files.\nEach entry has an id and parentId, forming a tree.\n\nSession location: ~/.pi/agent/sessions/"
+          }
+        ]
+      }
+    },
+    {
+      "type": "message",
+      "id": "d11-7",
+      "parentId": "d11-6",
+      "timestamp": "2026-09-14T01:06:11.289Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已经确认了会话结构。管理器会直接读取 JSONL，并把收藏、归档和显示名称保存在独立文件中。\n\n```typescript\ninterface SessionMeta {\n  name?: string;\n  starred?: boolean;\n  archived?: boolean;\n}\n```\n\n这样可以保留原始会话记录，也不会与 pi 的实时写入冲突。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d11-8",
+      "parentId": "d11-7",
+      "timestamp": "2026-09-14T01:07:26.289Z",
+      "message": {
+        "role": "user",
+        "content": "可以，也把工具调用和思考过程区分开显示。"
+      }
+    },
+    {
+      "type": "message",
+      "id": "d11-9",
+      "parentId": "d11-8",
+      "timestamp": "2026-09-14T01:08:41.289Z",
+      "message": {
+        "role": "assistant",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "content": [
+          {
+            "type": "text",
+            "text": "已加入折叠展示。工具调用显示工具名、参数和结果；思考过程默认收起，方便快速浏览对话。\n\n会话文件更新后，页面会自动获取最新内容。你也可以暂停跟随，在历史消息中停留。"
+          }
+        ],
+        "usage": {
+          "input": 3250,
+          "output": 830,
+          "cacheRead": 1200,
+          "totalTokens": 5280,
+          "cost": {
+            "total": 0.0274
+          }
+        },
+        "stopReason": "stop"
+      }
+    }
+  ]
+]

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Pi Sessions",
+  "version": "0.1.0",
+  "identifier": "dev.pi-sessions.desktop",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://127.0.0.1:1420",
+    "beforeDevCommand": "npm run dev:renderer",
+    "beforeBuildCommand": "npm run build:renderer"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Pi Sessions · 会话工作台",
+        "width": 1440,
+        "height": 960,
+        "minWidth": 960,
+        "minHeight": 680,
+        "center": true,
+        "visible": true,
+        "resizable": true,
+        "backgroundColor": "#f6f7f9"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "dmg", "deb", "appimage"],
+    "category": "DeveloperTool",
+    "shortDescription": "Desktop manager for local Pi coding-agent sessions",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico",
+      "icons/icon.icns"
+    ],
+    "windows": {
+      "nsis": {
+        "displayLanguageSelector": true,
+        "languages": ["SimpChinese", "English"],
+        "installMode": "currentUser"
+      }
+    }
+  }
+}
