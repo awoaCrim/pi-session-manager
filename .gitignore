@@ -1,0 +1,23 @@
+# Local build and runtime output
+node_modules/
+dist/
+dist-server/
+src-tauri/target/
+src-tauri/gen/
+.demo/
+.local/
+.work/
+.env
+*.log
+test-results/
+playwright-report/
+.playwright-mcp/
+pi-sessions-*.png
+release/
+
+# Trellis and other local agent workflow files. Never upload these.
+.trellis/
+.agents/
+.codex/
+AGENTS.md
+**/*trellis*
